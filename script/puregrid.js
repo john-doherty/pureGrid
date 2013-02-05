@@ -1,6 +1,4 @@
-//
 // returns the index of an item in an array
-//
 Array.prototype.indexOf = function(val)
 {
 	for(var i=0,l=this.length;i<l;i++)
@@ -10,18 +8,18 @@ Array.prototype.indexOf = function(val)
 	return -1;
 };
 
+// does a regex match on a string
+String.prototype.matches = function(v){ 
+	return (new RegExp(v,'gm')).test(this); 
+};
 
-//
-// does the string match a regular expression pattern ?
-//
-String.prototype.matches = function(v){ return (new RegExp(v,'gm')).test(this); };
-
-//
 // 'this {0} a {1}'.format('is','test') = 'this is a test';
-//
-String.prototype.format = function() { var a = arguments; return this.replace(/\{\d+\}/g, function(c){return a[c.match(/\d+/)];}); };
+String.prototype.format = function() { 
+	var a = arguments; 
+	return this.replace(/\{\d+\}/g, function(c){return a[c.match(/\d+/)];}); 
+};
 
-// returns true if any of the parameters match the value of this
+// returns true if any of the parameters match the value of this string
 String.prototype.anyOf = function () {
     
 	for (var i = 0, l = arguments.length; i < l; i++) {
@@ -70,7 +68,10 @@ Array.prototype.where = function(p /* property or index */, v /* value */)
 	return r;
 };
 
+// returns the first item in an array or null
 Array.prototype.first = function() { return (this.length>0) ? this[0] : null; };
+
+// returns the last item in an array or null
 Array.prototype.last = function() { return (this.length>0) ? this[this.length-1] : null; };
 
 //
@@ -78,11 +79,12 @@ Array.prototype.last = function() { return (this.length>0) ? this[this.length-1]
 //
 var tools = {
 
-    /* if running in debug mode, write values to the console window */
+    // if running in debug mode, write values to the console window
     trace : function (s) { 
 	    if (console && console.log) { console.log(s); };
     },
 
+	// cancels an event
     cancelEvent: function (e) {
         e = e || event;
         if (e.stopPropagation) { e.stopPropagation(); e.preventDefault(); }
@@ -110,6 +112,7 @@ var tools = {
         return result;
     },
 
+	// shorthand method to create elements with attributes
     createElement: function (parent, tagName, attributes, innerText, innerHtml) {
 
         var el = document.createElement(tagName);
@@ -131,6 +134,7 @@ var tools = {
         return el;
     },
 
+	// adds a css class to an element if it does not already exist
     addCss: function (el, val) {
         var css = el.className||"";
         if (!css.matches('(^|\\s)' + val)) {
@@ -138,6 +142,7 @@ var tools = {
         }
     },
 
+	// removes css from an element if it exists
     removeCss: function (el, val) {
 
         var css = el.className;
@@ -149,7 +154,10 @@ var tools = {
 
 }
 
-
+//
+// main pureGrid object.
+// (you can have multiple pureGrids on the screen, each one is added to the pureGrid.items collection)
+//
 var pureGrid = {
 
 	// collection of on screen grids indexed by id 
@@ -187,6 +195,7 @@ var pureGrid = {
 		}
 	},
 
+	// main entry point. Scans the DOM for <div class="puregrid"></div> and turns them into a pureGrid
 	init : function()
 	{
         if (/loaded|complete/i.test(document.readyState)) {
@@ -269,7 +278,7 @@ var pureGrid = {
 		// we need to update the scroller code so it knows the number of rows has decreased! (height)
 	},
 	
-	/* updates a row in the table */
+	// updates a row in the table
 	updateRow: function (tableId, rowIndex, rowData)
 	{
 	    var tbl = pureGrid.items.where('id', tableId).first();
@@ -319,12 +328,13 @@ var pureGrid = {
 		return false;
 	},
 	
-	/* does the same as reload only using the local array rather then reloading from the server */
+	// does the same as reload only using the local array rather then reloading from the server
 	refresh: function (tableId)
 	{
 		alert('to be implemented..');
 	},
 	
+	// requests the url 
 	load: function (tableId, url /* jsonp url */)
 	{
 	    var tbl = pureGrid.items.where('id', tableId).first();
@@ -337,6 +347,7 @@ var pureGrid = {
 	
 	// modifies the scroll position and triggers a redraw at the specified row/col
 	scrollTo: function (tableId, rowIndex, colIndex) {
+	
 	    var tbl = pureGrid.items.where('id', tableId).first();
 
 	    if (tbl) {
@@ -344,7 +355,7 @@ var pureGrid = {
 	    }
 	},
 	
-	/* binds json data to the table, executed via JsonP */
+	// binds json data to the table, executed via JsonP
 	bind: function (tableId, config)
 	{
 	    var tbl = pureGrid.getById(tableId);
@@ -381,13 +392,13 @@ var pureGrid = {
 	    // get text property name for this browser
 		txtProp : ('textContent' in document.createElement('span')) ? 'textContent' : 'innerText',
 		
-		// event subscribers
+		// array to hold event subscribers
 		subscribers : [],
 
-		// supported events
+		// list of supported events
 		events : ['onready','onrowclick','onrowdblclick','oncellclick','onscroll','oncontextclick'],
 
-		// let event subscribers know an event has occurred
+		// internal fireEvent mthod used to let subscribers know an event has occurred
 		fireEvent : function(name, instance)
 		{
 			var subs = pureGrid._.subscribers.where('name', name),
@@ -402,7 +413,7 @@ var pureGrid = {
 			}
 		},
 
-		// creates new virtual table
+		// creates a new grid object that will be stored in the pureGrid.items collection
 		create : function(el, config /* optional config object */)
 		{
 			this.id = el.id;									// assign table id to object
@@ -474,25 +485,26 @@ var pureGrid = {
 
 		},
 		
+		// builds the html table based on the config passed to the pureGrid.bind method via a jsonP response
 		render : function()
 		{
 			var el = this.container;
 			
 			el.innerHTML = "";
 
-			this.rendering = true;													    // set a flag to indicate we are in render state
-			this.currentRowIndex = 0;													// the current data row position of the topmost element
-			this.currentColIndex = 0;													// the current data column of the leftmost rendered element
-			this.tableRowLength = this.config.rows;								        // virtual row length
-			this.tableColLength = this.config.cols;									    // virtual col length		
-			this.dataRowLength = Math.max(this.data.length, 0); 								// holds the data row length
-			this.dataColLength = (this.data && this.data.length > 0) ? this.data[0].length : 0; // holds the data column length
+			this.rendering = true;								// set a flag to indicate we are in render state
+			this.currentRowIndex = 0;							// the current data row position of the topmost element
+			this.currentColIndex = 0;							// the current data column of the leftmost rendered element
+			this.tableRowLength = this.config.rows;				// virtual row length
+			this.tableColLength = this.config.cols;				// virtual col length		
+			this.dataRowLength = Math.max(this.data.length, 0);									// holds the data row length
+			this.dataColLength = (this.data && this.data.length > 0) ? this.data[0].length : 0;	// holds the data column length
 			this.startRowIndex = this.config.firstRowIsHeader ? 1 : 0;
 			this.startColIndex = this.config.firstCoIsHeader ? 1 : 0;
 			this.selectedCells = {};
 			this.selectedRows = {};
 
-			// if set, assign users css class
+			// if set, assign user defined css class
 			if (this.config.css != '') tools.addCss(el, this.config.css);
 
 			// if caption set, apply css to allow the table to cater for the additional space required
@@ -504,6 +516,7 @@ var pureGrid = {
 			// create visual table (set width to width of container)
 			this.table = tools.createElement(this.tableWrapper, 'table', { 'class': 'hidden', tabIndex: 0, 'cellpadding': '0', 'cellspacing': '0' });
 
+			// if we have a caption, add the element
 			if (this.config.caption != '') {
 			    this.caption = tools.createElement(this.table, 'caption', null, this.config.caption);
 			}
@@ -516,6 +529,7 @@ var pureGrid = {
                 rowIndex = 0,
                 colIndex = 0;
 
+			// build the table
 			while (rowIndex < this.tableRowLength)
 			{
 				while (colIndex < this.tableColLength)
@@ -590,6 +604,7 @@ var pureGrid = {
 			this.table.removeAttribute('class');
 		},
 
+		// requests the jsonP data using a dynamic script tag
 		load : function(url)
 		{
 			url = url || this.dataUrl;
@@ -801,7 +816,7 @@ var pureGrid = {
 
 		},
 		
-		// assigns new inner text values to table cells
+		// repopulates the table with data on scroll using innerText 
 		redraw : function(rowIndex)
 		{
 		    if (this.busy) return;
@@ -943,9 +958,7 @@ var pureGrid = {
 			this.busy = false;
 		},
 
-	    //
-	    // move the scroll bar to trigger a redraw
-        //
+	    // moves the scroll bar to the desire position, triggering a redraw
 		scrollTo: function (rowIndex, colIndex) {
 
             // take into account the header row if we have one
@@ -959,9 +972,7 @@ var pureGrid = {
 
 		},
 
-		//
-		// update data array at grid reference
-		//
+		// updates the data array at grid reference provided and executes a redraw to update the display
 		updateCell: function (dataRowIndex, dataColIndex, value)
 		{
 		    dataRowIndex = this.currentRowIndex + dataRowIndex;
@@ -980,9 +991,7 @@ var pureGrid = {
 			this.redraw();
 		},
 		
-		//
-		// selects a cell by row and col numbers
-		//
+		// selects a cell at row an col position, if the cell is not visible it is scrolled into view
 		selectCell: function (dataRowIndex, dataColIndex)
 		{
             // clear previous selections
@@ -1041,9 +1050,7 @@ var pureGrid = {
 		    this.redraw();
 		},
 
-		//
 		// places a cell at row/column position into edit mode
-		//
 		editCell: function (dataRowIndex, dataColIndex) {
 			
 		    if (!this.inEditMode) // if its not already editable
@@ -1055,10 +1062,10 @@ var pureGrid = {
 		        if (!hasDataType) return;
 
 		        var rowIndex = Math.max(dataRowIndex - this.currentRowIndex, this.startRowIndex),
-                    colIndex = dataColIndex;
-
-		        var el = this.table.rows[rowIndex].cells[colIndex],
-                    value = this.data[dataRowIndex][colIndex].constructor === Object ? this.data[dataRowIndex][colIndex].val : this.data[dataRowIndex][colIndex];
+                    colIndex = dataColIndex,
+					el = this.table.rows[rowIndex].cells[colIndex],
+                    value = this.data[dataRowIndex][colIndex].constructor === Object ? this.data[dataRowIndex][colIndex].val : this.data[dataRowIndex][colIndex],
+					editor = null;
 			
 			    // clear all cell selections
 			    this.clearCellSelection();
@@ -1070,10 +1077,9 @@ var pureGrid = {
 				var dataType = this.config.dataTypes[colIndex] || '';
 
 				// built the editor (input or select)
-				var editor = null;
 				if (dataType.constructor === Array) 
 				{
-					// insert a select box
+					// we have an array of values so insert a select box
 				    editor = pureGrid._.arraytoSelectBox(dataType, el.id, value);
 
                     // set the dimensions of the select box to match the cell
@@ -1081,7 +1087,7 @@ var pureGrid = {
 				}
 				else
 				{
-					// insert input to allow value change (inc pointer back to this object)
+					// insert input to allow value change
 				    editor = tools.createElement(null, 'input', { 'type': 'text', 'value': value, 'style': 'width:' + el.offsetWidth + 'px;height:' + el.innerHeight + 'px;' });
 				}
 				editor.className = "puregrid-editor";
@@ -1089,16 +1095,16 @@ var pureGrid = {
 				// place the table into edit mode (locking all interaction)
 				this.inEditMode = true;
 				
-				// hook edit complete event triggers
+				// setup edit complete hooks
 				editor.onkeyup = editor.onblur = pureGrid._.eventDelegate;
 
-				// add editor to the table cell
+				// add the editor to the current table cell
 				el.appendChild(editor);
 
-				// set focus on the editor
+				// set focus to the editor
 				editor.focus();
 
-				// if the editor is an input, select text
+				// if the editor is an input, select the text
 				if (editor.tagName.toLowerCase() == "input") editor.select();
 
 				// visually mark this cell as in edit mode
@@ -1112,9 +1118,8 @@ var pureGrid = {
 			}
 		},
 
-	    //
 	    // removes the editor from the cell, returns true if complete otherwise false (if validation failed)
-        //
+		// edit can not be canceled if the value is invalid
 		clearEditCell : function() {
 
 		    if (this.inEditMode && this.editor) {
@@ -1158,7 +1163,7 @@ var pureGrid = {
 		        }
 		        else {
 
-		            // if its invalid we need to disable the scrollbars, or do we ? perhaps we should just replace it with the original value ?
+		            // mark the cell as invalid using CSS
 		            if (cell.className.indexOf('invalid') <= -1) {
 
                         // add an invalid style to let the user know this cell needs attention
@@ -1176,9 +1181,7 @@ var pureGrid = {
 		    return false;
 		},
 		
-		//
-		// checks if a value is valid based on type (array/regex)
-		//
+		// checks if a value is valid based on data type (array/regex)
 		isValid : function(value, type)
 		{
 			switch (type.constructor)
@@ -1198,9 +1201,7 @@ var pureGrid = {
 			return false;
 		},
 
-	    //
 	    // checks if a row is visible
-        //
 		isCellVisible: function (rowIndex, colIndex) {
 
 		    if (this.data.length > 0) {
@@ -1210,9 +1211,7 @@ var pureGrid = {
 		    return false;
 		},
 
-	    //
 	    // converts a single dimension array into a HTML select box
-	    //
 		arraytoSelectBox : function (array, id, selected) {
 		    var select = tools.createElement(null,'select',{'id': id, 'name': id});
   
@@ -1226,5 +1225,5 @@ var pureGrid = {
 	}
 }
 
-// attempt to create the menu as soon as the document is ready
+// create the grid as soon as the document is ready
 pureGrid.init.repeat(50);
