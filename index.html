@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Pure Grid Development</title>
+		<link href="styles/puregrid.css" rel="stylesheet" type="text/css" />
+		<style type="text/css">
+			/* application styles */
+			
+			body { font-family: tahoma; font-size: 12px; }
+
+			#grid { width: 100%; }
+			#grid .out-of-date { background-color: #FF3300;}
+			#grid .out-of-date.selected { background-color: #FF9E66;}
+			#grid .pending-action { background-color: #996600; }
+			#grid .pending-action.selected { background-color: #99823F; }
+			
+			/* column widths are set via CSS as they are visual elements */
+			/*#grid col { width: 100px; }*/ /* default rule applies to all cols */
+			
+			#grid .puregrid-col1 { background-color: #fff; width: 300px; } /* targets col 1 */
+			
+			/* we do need to implement fixed col||row*/
+			
+			/* set all other cols */
+			/*
+			#grid .puregrid-col2,
+			#grid .puregrid-col3,
+			#grid .puregrid-col4,
+			#grid .puregrid-col5,
+			#grid .puregrid-col6,
+			#grid .puregrid-col7,
+			#grid .puregrid-col8,
+			#grid .puregrid-col9,
+			#grid .puregrid-col10,
+			#grid .puregrid-col11,
+			#grid .puregrid-col12,
+			#grid .puregrid-col13 { width: 30px; background: #833;}*/ /* targets col 10 */
+
+			#tests a { display: inline-block; padding: 8px;}
+			h1 { font-size: 16px;}
+			h2 { font-size: 14px;}
+		</style>
+		<script type="text/javascript" src="script/puregrid.js"></script>
+		<script type="text/javascript">
+			
+				if (window.pureGrid)
+				{
+					pureGrid.event.subscribe('onready',function(){
+						//alert('ready!');
+					});
+
+					pureGrid.event.subscribe('onrowclick', function(dataRow, dataindex){
+						//alert('{0} row clicked \n\n {1} \n\n  Data Index = {2}'.format(this.id, dataRow, dataindex));
+					});
+					
+					pureGrid.event.subscribe('onsort', function(colIndex) {
+						//alert('{0} col clicked \n Col Index = {1}'.format(this.id, colIndex));
+					});
+					
+					pureGrid.event.subscribe('oncellclick', function(dataCell, cellIndex){
+						//alert('{0} cell clicked \n Cell index = {1}\n cell value={2}'.format(this.id, cellIndex, dataCell));
+					});
+				}
+				
+		</script>
+		<script type="text/javascript">
+		
+			function getTime()
+			{
+				var d = new Date();
+				return d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+			}
+			
+		</script>
+	</head>
+	<body>
+		<h1>pureGrid</h1>
+		<div id="grid" class="puregrid puregrid-selectablerows puregrid-selectablecells">
+			<input type="hidden" class="puregrid-data-url" value="data/data-5000.js" />
+		</div>
+		<h2>Tests</h2>
+		<div id="tests">
+			<a href="javascript:void(0);" onclick="pureGrid.addRow('grid',3,[3, 'this','row','has','been','inserted','via','the','pureGrid.addRow','method'])">Add a row at line 3</a>
+			<a href="javascript:void(0);" onclick="pureGrid.removeRow('grid', 3)">Remove row 3</a>
+			<a href="javascript:void(0);" onclick="pureGrid.updateRow('grid',3,[3,'hello','world'])">Update row 3</a>
+			<a href="javascript:void(0);" onclick="pureGrid.updateCell('grid', 4, 4, getTime())">Set value of row 4 column 4</a>
+			<a href="javascript:void(0);" onclick="pureGrid.scrollTo('grid', 100, 0)">Scroll to row 100</a>
+			<a href="javascript:void(0);" onclick="pureGrid.editCell('grid', 3, 3)">Edit cell 3, 3</a>
+			<a href="javascript:void(0);" onclick="pureGrid.selectCell('grid', 4, 4)">Select cell 4, 4</a>
+			<a href="javascript:void(0);" onclick="pureGrid.load('grid')">Reload Data</a>
+		</div>
+		<h2>Features</h2>
+		<ol>
+			<li>Seperates JavaScript from Page</li>
+			<li>Totally self contained (JQuery independant)</li>
+			<li>Very fast (not creating dom nodes on the fly)</li>
+			<li>Reconfigurable on each request</li>
+			<li>Editable cells and validation</li>
+			<li>Uses minimul HTML tags (table related tags, no div's, spans)</li>
+			<li>Cross browser compatible</li>
+			<li>Small and compact</li>
+			<li>Fully resizable without resize code</li>
+			<li>Readable source code</li>
+		</ol>
+	</body>
+</html>

@@ -1,0 +1,183 @@
+
+/* virtual grid css */
+
+.puregrid {
+    width: 800px; /* default width */
+    height: auto; /* default height */
+    /*border: 1px solid #D0D7E5;*/
+    background: #eeeeee;
+    padding: 0 0 1px 0;
+    margin: 0;
+    overflow: hidden;
+    position: relative;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+
+.puregrid-show-caption {
+    padding-bottom: 34px;
+}
+/* increase the padding bottom to cater for the caption */
+
+.puregrid.puregrid-scroll-x {
+}
+/**/
+.puregrid.puregrid-scroll-y {
+}
+/**/
+
+.puregrid-table-wrapper {
+    margin-right: 16px;
+}
+/* allow for the right scrollbar */
+
+.puregrid .scroll-y {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    overflow: scroll;
+    overflow-x: hidden;
+    width: 18px;
+    z-index: 999 !important;
+    /*have a problem with z-index here*/
+}
+
+.puregrid.loading {
+    background: #eeeeee url('../images/loading.gif') no-repeat center center !important;
+    height: 230px;
+}
+
+.puregrid table {
+    border-collapse: collapse;
+    font-family: tahoma;
+    font-size: 12px;
+    margin-top: 0px;
+    table-layout: fixed;
+    width: 100%;
+}
+
+    .puregrid table:focus {
+        outline: 0;
+    }
+
+    .puregrid table.hidden {
+        /*position: absolute;*/
+        /*left: -99999px;*/
+    }
+
+    .puregrid table caption {
+        border: 1px solid #9eb6ce;
+        white-space: nowrap;
+        padding: 4px;
+        background-color: #e4ecf7;
+    }
+
+    .puregrid table colgroup col {
+        background-color: #fff;
+    }
+
+        .puregrid table colgroup col.puregrid-rowheader {
+            width: 40px !important;
+        }
+
+/* should only be applied if hover is enabled */
+.puregrid tbody tr:hover {
+    background-color: #eaecf5;
+    cursor: pointer;
+}
+
+.puregrid table tr.selected td {
+    background-color: #dce6f0;
+}
+
+.puregrid table tr.selected th {
+    background-color: #fed758;
+}
+
+.puregrid table colgroup col.selected {
+    background: #eaecf5;
+}
+
+.puregrid table td,
+.puregrid table th {
+    border: 1px solid #dadcdd;
+    white-space: nowrap;
+    padding: 4px;
+}
+
+.puregrid table th {
+    background-color: #dfe2e7;
+    overflow: hidden;
+    cursor: pointer;
+    border-color: #9eb6ce;
+    font-weight: normal;
+}
+
+.puregrid table td {
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+    .puregrid table td.selected {
+        outline: 2px solid #000;
+        /*border: 1px solid #000;*/
+    }
+
+    .puregrid table td.editing {
+        padding: 3px;
+        /*border: 1px solid #000;*/
+        outline: 2px solid #000;
+    }
+
+    .puregrid table td.invalid {
+        padding: 3px;
+        outline: 2px solid #e00;
+        background: url('../images/invalid.png') no-repeat right center;
+    }
+
+.puregrid table th.selected {
+    background: #ffe468;
+    border-left: 1px solid #c28a30;
+    border-right: 1px solid #c28a30;
+    border-bottom: 1px solid #c28a30;
+}
+
+.puregrid table td input,
+.puregrid table td select {
+    font-family: tahoma;
+    font-size: 11px;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0;
+    background: transparent;
+}
+
+    .puregrid table td input:focus,
+    .puregrid table td select:focus {
+        outline: none;
+    }
+
+.puregrid-editor {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+
+.puregrid-scroll-disabled {
+    overflow: hidden !important;
+}
+
+/* IE HACKS */
+.puregrid table td.selected {
+    *border: 2px solid #000;
+    *padding: 3px;
+}
+
+.puregrid table td.editing {
+}
