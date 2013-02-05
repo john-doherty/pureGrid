@@ -580,13 +580,17 @@ var pureGrid = {
 			scrollHeight += (this.config.caption) ? 1 : 0;
 			scrollHeight *= this.cellHeight;
 			
+			tools.addCss(this.container, 'puregrid-scroll-y');
+			this.scrollerY = tools.createElement(this.container, 'div', { 'class': 'scroll-y' }, '\u00A0');
+			
+			// only force a scroll bar if its needed
 			if (this.dataRowLength > this.tableRowLength)
 			{
-			    tools.addCss(this.container, 'puregrid-scroll-y');
-				this.scrollerY = tools.createElement(this.container, 'div', { 'class': 'scroll-y' }, '\u00A0');
 				tools.createElement(this.scrollerY, 'div', { 'style': 'height:' + scrollHeight + 'px;' });
-				this.scrollerY.onscroll = pureGrid._.eventDelegate;
 			}
+			
+			// hook the on scroll event
+			this.scrollerY.onscroll = pureGrid._.eventDelegate;
 			
 			// draw the data at row 1
 			this.redraw(0, 0);
