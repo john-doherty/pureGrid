@@ -1,3 +1,3 @@
 # Welcome to pureGrid
 
-For info, please visit (john-doherty/pureGrid/wiki)
+For more information please visit http://github.com/john-doherty/pureGrid/wiki
