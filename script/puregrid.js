@@ -449,7 +449,7 @@ var pureGrid = {
 				rows : parseInt(cn.getCssKeyValue('puregrid-rows')) || -1,				// number of rows to render	
 				cols : parseInt(cn.getCssKeyValue('puregrid-cols')) || -1,				// number of cols to render
 				firstRowIsHeader : (cn.getCssKeyValue('puregrid-firstrowisheader')>-1),	// row to use as column headers
-				firstCoIsHeader : (cn.indexOf('puregrid-firstcolisheader')>-1),			// should we display row numbers ?
+				firstColIsHeader : (cn.indexOf('puregrid-firstcolisheader')>-1),			// should we display row numbers ?
 				selectableRows : (cn.indexOf('puregrid-selectablerows')>-1),			// is the user allowed to select rows
 				selectableCells : (cn.indexOf('puregrid-selectablecells')>-1),			// are the individual cells selectable ?
 				css : '',																// custom css class specified by the developer
@@ -462,7 +462,7 @@ var pureGrid = {
 			this.sortDirection = 1;                                     // 1 ascending, -1 descending
 			this.selectedCellIndexes = {};                                    // selected cells are stored as properties on an object (removes the need to search when rendering)
 			this.startRowIndex = this.config.firstRowIsHeader ? 1 : 0;  // the starting row for data within the virtual grid
-			this.startColIndex = this.config.firstCoIsHeader ? 1 : 0;
+			this.startColIndex = this.config.firstColIsHeader ? 1 : 0;
 
 			// store reference to HTML elements
 			this.container = el;		// cache the container for this table
@@ -515,9 +515,10 @@ var pureGrid = {
 			this.dataRowLength = Math.max(this.data.length, 0);									// holds the data row length
 			this.dataColLength = (this.data && this.data.length > 0) ? this.data[0].length : 0;	// holds the data column length
 			this.startRowIndex = this.config.firstRowIsHeader ? 1 : 0;
-			this.startColIndex = this.config.firstCoIsHeader ? 1 : 0;
+			this.startColIndex = this.config.firstColIsHeader ? 1 : 0;
 			this.selectedCellIndexes = {};
 			this.selectedRowIndexes = {};
+			this.selectedCell = null;							// hold a reference to the currently selected TD
 
 			// if set, assign user defined css class
 			if (this.config.css != '') tools.addCss(el, this.config.css);
@@ -552,7 +553,7 @@ var pureGrid = {
 					// if first tr, add cols
 					if (rowIndex === 0)
 					{
-						var colCss = (colIndex === 0 && this.config.firstCoIsHeader) ? 'puregrid-rowheader' : 'puregrid-col' + (colIndex + 1);
+						var colCss = (colIndex === 0 && this.config.firstColIsHeader) ? 'puregrid-rowheader' : 'puregrid-col' + (colIndex + 1);
 					
 						// add cols
 						this.cols[colIndex] = tools.createElement(cgroup, 'col', { 'class': colCss });
@@ -563,7 +564,7 @@ var pureGrid = {
 						// add column headers
 					    cell = tools.createElement(tr, 'th', { 'scope': 'col' }, this.data[0][colIndex]);
 					}
-					else if (colIndex === 0 && this.config.firstCoIsHeader)
+					else if (colIndex === 0 && this.config.firstColIsHeader)
 					{
 						// add row headers
 					    cell = tools.createElement(tr, 'th', { 'scope': 'row' }, '\u00A0');
@@ -615,7 +616,6 @@ var pureGrid = {
 			
 			// attach event handlers
 			this.table.onclick = pureGrid._.eventDelegate;
-			//this.table.onfocus = pureGrid._.eventDelegate;
 			this.container.onkeyup = pureGrid._.eventDelegate;
 			this.container.onkeydown = pureGrid._.eventDelegate;
 			
@@ -847,7 +847,7 @@ var pureGrid = {
                 rowLength = Math.min(this.dataRowLength, this.tableRowLength),
 				dataRowIndex = 0,
 				dataColIndex = 0,
-				selectedTableCell = null;
+				selectedCell = null;
 
 		    // ensure row starts at a valid position
 		    rowIndex = (rowIndex > -1) ? rowIndex : this.currentRowIndex;
@@ -917,7 +917,7 @@ var pureGrid = {
 				    if (isCellSelected && !cell._selected) {
 				        tools.addCss(cell, 'selected');
 				        cell._selected = true;
-						selectedTableCell = cell;
+						selectedCell = cell;
 				    }
 				    else if (cell._selected) // to avoid reflows, check the selected status first!
 				    {
@@ -925,46 +925,67 @@ var pureGrid = {
 				        cell._selected = false;
 				    }
 				}
+			}
+			
+			// update the header row/col markers
+			pureGrid._.setRowColMarkers.call(this, selectedCell);
+			
+			if (selectedCell) {
 
-			}
-
-			// if we have a header row, clear previous selected header row cells
-			if (this.config.firstRowIsHeader){
-			
-				for(var i=0, l=this.table.rows[0].cells.length-1; i<l; i++) {
-					tools.removeCss(this.table.rows[0].cells[i], 'selected');
-				}
-			}
-			
-			// if we have a header column, clear previous selected header column cells
-			if (this.config.firstCoIsHeader){
-			
-				for(var i=0, l=this.table.rows.length-1; i<l; i++) {
-					tools.removeCss(this.table.rows[i].cells[0], 'selected');
-				}
-			}
-			
-			// if we have a selected cell, update header markers and focus the cell
-			if (selectedTableCell) {
-			
-				// get the selected cell row and col numbers
-				var cellIndex = selectedTableCell.cellIndex,
-					rowIndex = selectedTableCell.parentNode.rowIndex;
-			
-				// select the current column header cell
-				if (this.config.firstRowIsHeader) tools.addCss(this.table.rows[0].cells[cellIndex], 'selected');
+				// set focus to the currently selected cell
+				selectedCell.focus();
 				
-				// select the current row header cell
-				if (this.config.firstCoIsHeader) tools.addCss(this.table.rows[rowIndex].cells[0], 'selected');
-
-				// set focus to the currently selected table cell
-				selectedTableCell.focus();
+				// store the currently selected cell
+				this.selectedCell = selectedCell;
+			}
+			else if (this.selectedCell)
+			{
+				this.selectedCell.blur();
 			}
 			
 			// redraw complete, reset busy flag
 			this.busy = false;
 		},
 
+		// select row and col headers for the selected cell 
+		setRowColMarkers: function(selectedCell){
+		
+			// get the row/col index of new and old selected cell
+			var newSelectedColIndex = (selectedCell) ? selectedCell.cellIndex : -1,
+				newSelectedRowIndex = (selectedCell) ? selectedCell.parentNode.rowIndex : -1,
+				oldSelectedColIndex = (this.selectedCell) ? this.selectedCell.cellIndex : -1,
+				oldSelectedRowIndex = (this.selectedCell) ? this.selectedCell.parentNode.rowIndex : -1;
+		
+			// update the column header
+			if (this.config.firstRowIsHeader) {
+			
+				// clear the old selected col header cell
+				if (oldSelectedColIndex > -1 && newSelectedColIndex > -1) {
+					tools.removeCss(this.table.rows[0].cells[oldSelectedColIndex], 'selected');
+				}
+
+				// set the new selected col header cell
+				if (newSelectedColIndex > -1) {
+					tools.addCss(this.table.rows[0].cells[newSelectedColIndex], 'selected');
+				}
+			}
+			
+			// update the row header
+			if (this.config.firstColIsHeader) {
+			
+				// clear the old selected row header cell
+				if (oldSelectedRowIndex > -1) {
+					tools.removeCss(this.table.rows[oldSelectedRowIndex].cells[0], 'selected');
+				}
+				
+				// set the new selected row header cell
+				if (newSelectedRowIndex > -1) {
+					tools.addCss(this.table.rows[newSelectedRowIndex].cells[0], 'selected');
+				}
+			}
+		
+		},
+		
 	    // moves the scroll bar to the desire position, triggering a redraw
 		scrollTo: function (rowIndex, colIndex) {
 
