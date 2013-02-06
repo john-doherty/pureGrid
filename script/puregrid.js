@@ -919,25 +919,14 @@ var pureGrid = {
 				        tools.addCss(cell, 'selected');
 				        cell._selected = true;
 				        cell.focus();
-
-                        /*
-				        if (this.config.firstRowIsHeader) {
-				            tools.addCss(this.table.rows[0].cells[colPos], 'selected');
-				        }*/
 				    }
 				    else if (cell._selected) // to avoid reflows, check the selected status first!
 				    {
 				        tools.removeCss(cell, 'selected');
 				        cell._selected = false;
-
-
-				        /*if (this.config.firstRowIsHeader) {
-				            tools.removeCss(this.table.rows[0].cells[colPos], 'selected');
-				        }*/
 				    }
-
-                    /*
-				    if (this.config.firstCoIsHeader && colPos!== 0 && cell._selected) {
+                   
+				    if (this.config.firstCoIsHeader && colPos !== 0 && cell._selected) {
 
 				        var rowHeader = this.table.rows[rowPos].cells[0];
 
@@ -945,13 +934,13 @@ var pureGrid = {
 				            tools.addCss(rowHeader, 'selected');
 				            rowHeader._selected = true;
 				        }
-				        else {
+				        /*else {
 				            tools.removeCss(rowHeader, 'selected');
 				            rowHeader._selected = false;
-				        }
+				        }*/
 				    }
-
-				    if (this.config.firstRowIsHeader && rowPos !==0 && cell._selected) {
+/*
+				    if (this.config.firstRowIsHeader && rowPos !== 0 && colPos !== 0 && cell._selected) {
 
 				        var colHeader = this.table.rows[0].cells[colPos];
 
@@ -964,8 +953,8 @@ var pureGrid = {
 				            colHeader._selected = false;
 				        }
 
-				    }*/
-
+				    }
+*/
 					//tools.trace('redrawing col {0} - data col {1}'.format(colPos, dataColIndex));
 				}
 
