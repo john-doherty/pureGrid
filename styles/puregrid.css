@@ -1,5 +1,13 @@
-
-/* virtual grid css */
+/**
+ * @license
+ * (c) 2013 John Doherty
+ * john{dot}doherty{at}eliteology{dot}com
+ * https://github.com/john-doherty/pureGrid
+ *
+ * Distributed under MIT license.
+ * All rights reserved.
+ *
+ **/
 
 .puregrid {
     width: 800px; /* default width */
@@ -22,12 +30,8 @@
 }
 /* increase the padding bottom to cater for the caption */
 
-.puregrid.puregrid-scroll-x {
-}
-/**/
-.puregrid.puregrid-scroll-y {
-}
-/**/
+.puregrid.puregrid-scroll-x { }
+.puregrid.puregrid-scroll-y { }
 
 .puregrid-table-wrapper {
     margin-right: 16px;
@@ -60,29 +64,29 @@
     width: 100%;
 }
 
-    .puregrid table:focus {
-        outline: 0;
-    }
+.puregrid table:focus {
+	outline: 0;
+}
 
-    .puregrid table.hidden {
-        /*position: absolute;*/
-        /*left: -99999px;*/
-    }
+.puregrid table.hidden {
+	/*position: absolute;*/
+	/*left: -99999px;*/
+}
 
-    .puregrid table caption {
-        border: 1px solid #9eb6ce;
-        white-space: nowrap;
-        padding: 4px;
-        background-color: #e4ecf7;
-    }
+.puregrid table caption {
+	border: 1px solid #9eb6ce;
+	white-space: nowrap;
+	padding: 4px;
+	background-color: #e4ecf7;
+}
 
-    .puregrid table colgroup col {
-        background-color: #fff;
-    }
+.puregrid table colgroup col {
+	background-color: #fff;
+}
 
-        .puregrid table colgroup col.puregrid-rowheader {
-            width: 40px !important;
-        }
+.puregrid table colgroup col.puregrid-rowheader {
+	width: 40px !important;
+}
 
 /* should only be applied if hover is enabled */
 .puregrid tbody tr:hover {
@@ -124,22 +128,22 @@
     overflow: hidden;
 }
 
-    .puregrid table td.selected {
-        outline: 2px solid #000;
-        /*border: 1px solid #000;*/
-    }
+.puregrid table td.selected {
+	outline: 2px solid #000;
+	/*border: 1px solid #000;*/
+}
 
-    .puregrid table td.editing {
-        padding: 3px;
-        /*border: 1px solid #000;*/
-        outline: 2px solid #000;
-    }
+.puregrid table td.editing {
+	padding: 3px;
+	/*border: 1px solid #000;*/
+	outline: 2px solid #000;
+}
 
-    .puregrid table td.invalid {
-        padding: 3px;
-        outline: 2px solid #e00;
-        background: url('../images/invalid.png') no-repeat right center;
-    }
+.puregrid table td.invalid {
+	padding: 3px;
+	outline: 2px solid #e00;
+	background: url('../images/invalid.png') no-repeat right center;
+}
 
 .puregrid table th.selected {
     background: #ffe468;
@@ -158,16 +162,15 @@
     background: transparent;
 }
 
-    .puregrid table td input:focus,
-    .puregrid table td select:focus {
-        outline: none;
-    }
+.puregrid table td input:focus,
+.puregrid table td select:focus {
+	outline: none;
+}
 
 .puregrid-editor {
     padding: 0 !important;
     margin: 0 !important;
 }
-
 
 .puregrid-scroll-disabled {
     overflow: hidden !important;
