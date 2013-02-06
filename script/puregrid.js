@@ -1,3 +1,14 @@
+/**
+ * @license
+ * (c) 2013 John Doherty
+ * john{dot}doherty{at}eliteology{dot}com
+ * https://github.com/john-doherty/pureGrid
+ *
+ * Distributed under MIT license.
+ * All rights reserved.
+ *
+ **/
+ 
 // returns the index of an item in an array
 Array.prototype.indexOf = function(val)
 {
