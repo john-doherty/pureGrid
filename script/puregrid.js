@@ -769,12 +769,14 @@ var pureGrid = {
 				                if (toRowIndex !== tbl.dataRowLength) tools.cancelEvent(e);
 				            }
 				            else if (key === 37) { // left
+
 				                var toColIndex = Math.max(colIndex - 1, tbl.startColIndex);
 
 				                tbl.selectCell(dataRowIndex, toColIndex);
 				            }
 				            else if (key === 39) { // right
-				                var toColIndex = Math.min(colIndex + 1, tbl.dataColLength);
+							
+				                var toColIndex = Math.min(colIndex + 1, tbl.dataColLength - tbl.startColIndex - 1);
 
 				                tbl.selectCell(dataRowIndex, toColIndex);
 				            }
@@ -913,16 +915,9 @@ var pureGrid = {
                     // update the table cell innerText value
 				    cell[pureGrid._.txtProp] = value;
 					
-                    // modify cell selection
-				    if (isCellSelected && !cell._selected) {
-				        tools.addCss(cell, 'selected');
-				        cell._selected = true;
+                    // if this cell is selected, store a reference to it
+				    if (isCellSelected) {
 						selectedCell = cell;
-				    }
-				    else if (cell._selected) // to avoid reflows, check the selected status first!
-				    {
-				        tools.removeCss(cell, 'selected');
-				        cell._selected = false;
 				    }
 				}
 			}
@@ -930,17 +925,25 @@ var pureGrid = {
 			// update the header row/col markers
 			pureGrid._.setRowColMarkers.call(this, selectedCell);
 			
+			if (this.selectedCell && selectedCell !== this.selectedCell) {
+			
+				// remove visual marker
+				tools.removeCss(this.selectedCell, 'selected');
+			
+				// blur the previous selected cell
+				this.selectedCell.blur();
+			}
+			
 			if (selectedCell) {
 
+				// visualy mark cell as selected 
+				tools.addCss(selectedCell, 'selected');
+			
 				// set focus to the currently selected cell
 				selectedCell.focus();
 				
 				// store the currently selected cell
 				this.selectedCell = selectedCell;
-			}
-			else if (this.selectedCell)
-			{
-				this.selectedCell.blur();
 			}
 			
 			// redraw complete, reset busy flag
