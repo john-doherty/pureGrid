@@ -300,10 +300,16 @@ var pureGrid = {
 
 	    if (tbl && tbl.data.length > 0)
 		{
+			// ensure the new row contains valid data (also ensure min length)
+			for (var i=0, l=tbl.dataColLength; i<l; i++) {
+				rowData[i] = rowData[i] || '';
+			}
+		
+			// add row to data array
 	        tbl.data.splice(rowIndex, 1, rowData);
 			
-	        // if the row is visible, force a redraw
-	        if (tbl.isCellVisible(rowIndex)) tbl.redraw();
+			// as the data array has changed, call render in order to force a recalc of the scrollbar
+			tbl.render();
 		}
 	},
 	
