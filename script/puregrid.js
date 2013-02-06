@@ -147,9 +147,11 @@ var tools = {
 
 	// adds a css class to an element if it does not already exist
     addCss: function (el, val) {
-        var css = el.className||"";
+	
+        var css = el.className || '';
+		
         if (!css.matches('(^|\\s)' + val)) {
-            el.className += (css=="") ? val : " " + val;
+            el.className += (css === '') ? val : ' ' + val;
         }
     },
 
@@ -441,7 +443,7 @@ var pureGrid = {
 			// get element styles
 			var cn = el.className || '';
 
-			// assign default config & get values from class name
+			// assign default config & get values from class names
 			this.config = {
 				caption : '',															// caption of table to be displayed above the table
 				rows : parseInt(cn.getCssKeyValue('puregrid-rows')) || -1,				// number of rows to render	
@@ -844,7 +846,8 @@ var pureGrid = {
 		    var colLength = Math.min(this.dataColLength, this.tableColLength),
                 rowLength = Math.min(this.dataRowLength, this.tableRowLength),
 				dataRowIndex = 0,
-				dataColIndex = 0;
+				dataColIndex = 0,
+				selectedTableCell = null;
 
 		    // ensure row starts at a valid position
 		    rowIndex = (rowIndex > -1) ? rowIndex : this.currentRowIndex;
@@ -861,12 +864,8 @@ var pureGrid = {
 				// work out the data row position
 			    dataRowIndex = rowIndex + rowPos;
 
-			    var isRowSelected = (this.selectedRows[dataRowIndex]);
-
-			    //tools.trace('REDRAWING ROW {0} - data row {1}'.format(rowPos, dataRowIndex));
-
 				// modify row selections
-			    if (isRowSelected && !this.table.rows[rowPos]._selected)
+			    if (this.selectedRows[dataRowIndex] && !this.table.rows[rowPos]._selected)
 				{
 					tools.addCss(this.table.rows[rowPos], 'selected');
 					this.table.rows[rowPos]._selected = true;
@@ -918,48 +917,50 @@ var pureGrid = {
 				    if (isCellSelected && !cell._selected) {
 				        tools.addCss(cell, 'selected');
 				        cell._selected = true;
-				        cell.focus();
+						selectedTableCell = cell;
 				    }
 				    else if (cell._selected) // to avoid reflows, check the selected status first!
 				    {
 				        tools.removeCss(cell, 'selected');
 				        cell._selected = false;
 				    }
-                   
-				    if (this.config.firstCoIsHeader && colPos !== 0 && cell._selected) {
-
-				        var rowHeader = this.table.rows[rowPos].cells[0];
-
-				        if (!rowHeader._selected) {
-				            tools.addCss(rowHeader, 'selected');
-				            rowHeader._selected = true;
-				        }
-				        /*else {
-				            tools.removeCss(rowHeader, 'selected');
-				            rowHeader._selected = false;
-				        }*/
-				    }
-/*
-				    if (this.config.firstRowIsHeader && rowPos !== 0 && colPos !== 0 && cell._selected) {
-
-				        var colHeader = this.table.rows[0].cells[colPos];
-
-				        if (!colHeader._selected) {
-				            tools.addCss(colHeader, 'selected');
-				            colHeader._selected = true;
-				        }
-				        else {
-				            tools.removeCss(colHeader, 'selected');
-				            colHeader._selected = false;
-				        }
-
-				    }
-*/
-					//tools.trace('redrawing col {0} - data col {1}'.format(colPos, dataColIndex));
 				}
 
 			}
 
+			// if we have a header row, clear previous selected header row cells
+			if (this.config.firstRowIsHeader){
+			
+				for(var i=0, l=this.table.rows[0].cells.length-1; i<l; i++) {
+					tools.removeCss(this.table.rows[0].cells[i], 'selected');
+				}
+			}
+			
+			// if we have a header column, clear previous selected header column cells
+			if (this.config.firstCoIsHeader){
+			
+				for(var i=0, l=this.table.rows.length-1; i<l; i++) {
+					tools.removeCss(this.table.rows[i].cells[0], 'selected');
+				}
+			}
+			
+			// if we have a selected cell, update header markers and focus the cell
+			if (selectedTableCell) {
+			
+				// get the selected cell row and col numbers
+				var cellIndex = selectedTableCell.cellIndex,
+					rowIndex = selectedTableCell.parentNode.rowIndex;
+			
+				// select the current column header cell
+				if (this.config.firstRowIsHeader) tools.addCss(this.table.rows[0].cells[cellIndex], 'selected');
+				
+				// select the current row header cell
+				if (this.config.firstCoIsHeader) tools.addCss(this.table.rows[rowIndex].cells[0], 'selected');
+
+				// set focus to the currently selected table cell
+				selectedTableCell.focus();
+			}
+			
 			// redraw complete, reset busy flag
 			this.busy = false;
 		},
