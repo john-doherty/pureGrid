@@ -457,10 +457,10 @@ var pureGrid = {
 			};
 
 			this.cellHeight = 0;                                        // cache the cell height
-			this.selectedRows = {};                                     // selected rows are stored as properties on an object (removes the need to search when rendering)
+			this.selectedRowIndexes = {};                                     // selected rows are stored as properties on an object (removes the need to search when rendering)
 			this.sortedColIndex = -1;                                   // the index of the sorted column, -1 = unsorted
 			this.sortDirection = 1;                                     // 1 ascending, -1 descending
-			this.selectedCells = {};                                    // selected cells are stored as properties on an object (removes the need to search when rendering)
+			this.selectedCellIndexes = {};                                    // selected cells are stored as properties on an object (removes the need to search when rendering)
 			this.startRowIndex = this.config.firstRowIsHeader ? 1 : 0;  // the starting row for data within the virtual grid
 			this.startColIndex = this.config.firstCoIsHeader ? 1 : 0;
 
@@ -516,8 +516,8 @@ var pureGrid = {
 			this.dataColLength = (this.data && this.data.length > 0) ? this.data[0].length : 0;	// holds the data column length
 			this.startRowIndex = this.config.firstRowIsHeader ? 1 : 0;
 			this.startColIndex = this.config.firstCoIsHeader ? 1 : 0;
-			this.selectedCells = {};
-			this.selectedRows = {};
+			this.selectedCellIndexes = {};
+			this.selectedRowIndexes = {};
 
 			// if set, assign user defined css class
 			if (this.config.css != '') tools.addCss(el, this.config.css);
@@ -685,7 +685,7 @@ var pureGrid = {
 					{
 					    var drRow = tbl.data[dataRowIndex] || null,
                             drCell = drRow && drRow[colIndex] || null,
-                            isSelectedCell = (tag === 'td' && tbl.selectedCells[dataRowIndex + '_' + colIndex] != undefined);
+                            isSelectedCell = (tag === 'td' && tbl.selectedCellIndexes[dataRowIndex + '_' + colIndex] != undefined);
 
 					    if (!tbl.inEditMode && tbl.config.selectableRows && el.scope === 'row' && tag === 'th') // SELECT ROW (onrowclick)
 						{
@@ -865,7 +865,7 @@ var pureGrid = {
 			    dataRowIndex = rowIndex + rowPos;
 
 				// modify row selections
-			    if (this.selectedRows[dataRowIndex] && !this.table.rows[rowPos]._selected)
+			    if (this.selectedRowIndexes[dataRowIndex] && !this.table.rows[rowPos]._selected)
 				{
 					tools.addCss(this.table.rows[rowPos], 'selected');
 					this.table.rows[rowPos]._selected = true;
@@ -883,7 +883,7 @@ var pureGrid = {
 				    dataColIndex = colPos;
 
 				    var cell = this.table.rows[rowPos].cells[colPos],
-                        isCellSelected = this.selectedCells[dataRowIndex + '_' + dataColIndex],
+                        isCellSelected = this.selectedCellIndexes[dataRowIndex + '_' + dataColIndex],
                         value = "",
                         css = "",
                         title = "";
@@ -1002,8 +1002,8 @@ var pureGrid = {
 		selectCell: function (dataRowIndex, dataColIndex)
 		{
             // clear previous selections
-		    this.selectedRows = {};
-		    this.selectedCells = {};
+		    this.selectedRowIndexes = {};
+		    this.selectedCellIndexes = {};
 
             // ensure data row index is valid
 		    dataRowIndex = Math.min(Math.max(this.startRowIndex, dataRowIndex), this.dataRowLength);
@@ -1012,7 +1012,7 @@ var pureGrid = {
 		    dataColIndex = Math.min(Math.max(this.startColIndex, dataColIndex), this.dataColLength);
 
 		    // create a unique id on an object of the selected data index (its faster to check if a variable exists than scan an array whilst for every cell)
-		    this.selectedCells[dataRowIndex + '_' + dataColIndex] = true;
+		    this.selectedCellIndexes[dataRowIndex + '_' + dataColIndex] = true;
 
 		    if (!this.isCellVisible(dataRowIndex, dataColIndex)) {
 
@@ -1033,27 +1033,27 @@ var pureGrid = {
 		selectRow : function(rowIndex)
 		{
 			// clear all cell selections
-		    this.selectedCells = {};
+		    this.selectedCellIndexes = {};
 		
 			// get data row position
 			var dataRowIndex = this.currentRowIndex + rowIndex;
 
-			if (this.selectedRows[dataRowIndex] === undefined)
+			if (this.selectedRowIndexes[dataRowIndex] === undefined)
 			{
-			    this.selectedRows[dataRowIndex] = true;
+			    this.selectedRowIndexes[dataRowIndex] = true;
 			    this.redraw();
 			}
 		},
 		
 		clearCellSelection : function()
 		{
-		    this.selectedCells = {};
+		    this.selectedCellIndexes = {};
 		    this.redraw();
 		},
 		
 		clearRowSelection : function(rowIndex)
 		{
-		    this.selectedRows = {};
+		    this.selectedRowIndexes = {};
 		    this.redraw();
 		},
 
