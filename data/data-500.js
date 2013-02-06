@@ -15,7 +15,7 @@ pureGrid.bind("grid", {
 	rows : 10,				// number of rows to render (inclusive)
 	css: 'product-view',	// CSS class to be assigned to grid (can be changed at runtime)
 	firstRowIsHeader: true,	// does the first row contain header values ? (row length inclusive)
-	firstCoIsHeader: true,	// should the grid render row numbers ? (col length inclusive)
+	firstColIsHeader: true,	// should the grid render row numbers ? (col length inclusive)
 	selectableRows : true,	// are rows selectable ?
 	selectableCells: true,	// are individual cells selectable (auto enabled if in editable=true ?
 	editable : true,		// is the table data editable ? (we need an array of allowed cols to edit)
