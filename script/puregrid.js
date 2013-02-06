@@ -246,7 +246,7 @@ var pureGrid = {
 		}
 	},
 	
-	// adds a row of data to the table at certain position (returns new row number to allow pureGrid.redraw to be called
+	// adds a row of data to the table at certain position
 	addRow: function (tableId, rowIndex, rowData)
 	{
 	    var tbl = pureGrid.items.where('id', tableId).first();
@@ -254,6 +254,8 @@ var pureGrid = {
 	    if (tbl && rowData.length > 0)
 		{
 	        rowIndex = (rowIndex || tbl.data.length) - 1;
+		
+			//TODO: need to padd/trim the rowData if the length does not match existing data
 		
 		    if (rowIndex >= 0)
 			{
@@ -264,8 +266,8 @@ var pureGrid = {
 		        tbl.data = tbl.data.concat(rowData);
 			}
 			
-            // if the row is visible, force a redraw
-		    if (tbl.isCellVisible(rowIndex)) tbl.redraw();
+			// re-render the table as the number of rows has changed
+			tbl.render();
 
 			return rowIndex + 1;
 		}
@@ -299,7 +301,7 @@ var pureGrid = {
 	        tbl.data.splice(rowIndex, 1, rowData);
 			
 	        // if the row is visible, force a redraw
-	        if (tbl.isCellVisible( rowIndex)) tbl.redraw();
+	        if (tbl.isCellVisible(rowIndex)) tbl.redraw();
 		}
 	},
 	
