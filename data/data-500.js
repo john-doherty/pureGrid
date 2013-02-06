@@ -1,3 +1,14 @@
+/**
+ * @license
+ * (c) 2013 John Doherty
+ * john{dot}doherty{at}eliteology{dot}com
+ * https://github.com/john-doherty/pureGrid
+ *
+ * Distributed under MIT license.
+ * All rights reserved.
+ *
+ **/
+ 
 pureGrid.bind("grid", {
 	caption : '',			// table caption that appears above the table
 	cols : 10,				// number of columns to render (inclusive)
