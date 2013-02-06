@@ -9,6 +9,8 @@
  *
  **/
  
+'use strict';
+ 
 // returns the index of an item in an array
 Array.prototype.indexOf = function(val)
 {
