@@ -19,7 +19,7 @@ pureGrid.bind("grid", {
 	selectableRows : true,	// are rows selectable ?
 	selectableCells: true,	// are individual cells selectable (auto enabled if in editable=true ?
 	editable : true,		// is the table data editable ? (we need an array of allowed cols to edit)
-	dataTypes : ['','^\\w+$',['one','two','three'],''],	// you must specify a data type for a column in order for it to be considered editable
+	dataTypes : ['','^\\w+$',['one','two','three'],'','','','','','','',''],	// you must specify a data type for a column in order for it to be considered editable
 	data : [
 		["","A","B","C","D","E","F","G","H","I","J"],
 		[1, {val:"B1",css:"classB1",id:"guidB1",tip:"tooltip B1"}, {val:"C1",css:"classC1",id:"guidC1",tip:"tooltip C1"}, {val:"D1",css:"classD1",id:"guidD1",tip:"tooltip D1"}, {val:"E1",css:"classE1",id:"guidE1",tip:"tooltip E1"}, {val:"F1",css:"classF1",id:"guidF1",tip:"tooltip F1"}, {val:"G1",css:"classG1",id:"guidG1",tip:"tooltip G1"}, {val:"H1",css:"classH1",id:"guidH1",tip:"tooltip H1"}, {val:"I1",css:"classI1",id:"guidI1",tip:"tooltip I1"}, {val:"J1",css:"classJ1",id:"guidJ1",tip:"tooltip J1"}],
