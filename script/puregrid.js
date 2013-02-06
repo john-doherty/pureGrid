@@ -990,7 +990,7 @@ var pureGrid = {
 		// updates the data array at grid reference provided and executes a redraw to update the display
 		updateCell: function (dataRowIndex, dataColIndex, value)
 		{
-		    dataRowIndex = this.currentRowIndex + dataRowIndex;
+		    dataRowIndex = Math.max(dataRowIndex, this.startRowIndex);
 
 			// update value of object or string
 		    if (this.data[dataRowIndex][dataColIndex].constructor === Object)
