@@ -81,7 +81,7 @@ var tools = {
 
     // if running in debug mode, write values to the console window
     trace : function (s) { 
-	    if (console && console.log) { console.log(s); };
+	    if (window.console && window.console.log) { window.console.log(s); };
     },
 
 	// cancels an event
@@ -613,8 +613,8 @@ var pureGrid = {
 		{
 			url = url || this.dataUrl;
 			
-			tools.trace('loading... ' + url);
-			
+			//tools.trace('loading... ' + url);
+
 			if (url != undefined && url !='')
 			{
 				url = url + '&nocache=' + (new Date()).getTime();
