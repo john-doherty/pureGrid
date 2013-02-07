@@ -938,7 +938,7 @@ var pureGrid = {
 				tools.removeCss(this.selectedCell, 'selected');
 			
 				// blur the previous selected cell
-				this.selectedCell.blur();
+				//this.selectedCell.blur();
 			}
 			
 			if (selectedCell) {
