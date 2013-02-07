@@ -289,10 +289,9 @@ var pureGrid = {
 		{
 	        tbl.data.splice(rowIndex, 1);
 			
-	        // if the row was visible, force a redraw
-	        if (tbl.isCellVisible( rowIndex)) tbl.redraw();
+			// rebuild the table as the total height has changed (this should be redraw + updateScrollbar method calls)
+	        tbl.render();
 		}
-		// we need to update the scroller code so it knows the number of rows has decreased! (height)
 	},
 	
 	// updates a row in the table
@@ -333,7 +332,7 @@ var pureGrid = {
 
 	    if (tbl)
 		{
-	        tbl.selectCell(rowIndex, colIndex);
+	        //tbl.selectCell(rowIndex, colIndex);
 	        tbl.editCell(rowIndex, colIndex);
 		}
 	},
@@ -1099,13 +1098,13 @@ var pureGrid = {
 
 		        // if we do not have a data type this column can not be edited
 		        if (!hasDataType) return;
-
+				
 		        var rowIndex = Math.max(dataRowIndex - this.currentRowIndex, this.startRowIndex),
                     colIndex = dataColIndex,
 					el = this.table.rows[rowIndex].cells[colIndex],
-                    value = this.data[dataRowIndex][colIndex].constructor === Object ? this.data[dataRowIndex][colIndex].val : this.data[dataRowIndex][colIndex],
+                    value = el[pureGrid._.txtProp],
 					editor = null;
-			
+
 			    // clear all cell selections
 			    this.clearCellSelection();
 
