@@ -166,8 +166,7 @@ var tools = {
             el.className = css.replace(new RegExp('(^|\\s)' + val, 'gi'), '');
         }
     }
-
-}
+};
 
 //
 // main pureGrid object.
@@ -195,7 +194,8 @@ var pureGrid = {
 		},
 		
 		// removes an event subscriber
-		unsubscribe : function(name, callback){
+		unsubscribe : function(name, callback) 
+		{
 			for(var i = pureGrid._.subscribers.length-1; i >= 0; i--)
 			{
 				var sub = pureGrid._.subscribers[i]
@@ -391,7 +391,7 @@ var pureGrid = {
 				// apply config passed by param
 				for (var a in config)
 				{
-					if (a!='data' && config[a]!=undefined) tbl.config[a] = config[a];
+					if (a != 'data' && config[a]!=undefined) tbl.config[a] = config[a];
 				}
 			
 				// assign the table data
@@ -504,7 +504,6 @@ var pureGrid = {
 				this.load.delay(0, null, this.dataUrl);				
 				tools.trace(this.dataUrl);
 			}
-
 		},
 		
 		// builds the html table based on the config passed to the pureGrid.bind method via a jsonP response
@@ -671,10 +670,10 @@ var pureGrid = {
                 // get the current dataRowIndex
 			    var dataRowIndex = tbl.currentRowIndex + rowIndex;
 
-				switch (type)
-			    {
-				    case 'scroll':
-				    {
+				switch (type) {
+				
+				    case 'scroll': {
+					
 				        if (!tbl.inEditMode) {
 
 				            // calculate the current row position
@@ -688,8 +687,8 @@ var pureGrid = {
 
 				    } break;
 
-					case 'click':
-					{
+					case 'click': {
+					
 					    var drRow = tbl.data[dataRowIndex] || null,
                             drCell = drRow && drRow[colIndex] || null,
                             isSelectedCell = (tag === 'td' && tbl.selectedCellIndexes[dataRowIndex + '_' + colIndex] != undefined);
@@ -710,131 +709,155 @@ var pureGrid = {
 						    tbl.selectCell(dataRowIndex, colIndex);
 						}
 
-					}break;
+					} break;
 
 				    case 'keydown': {
-
-				        if (tbl.config.editable && tbl.inEditMode && (tag === 'input' || tag === 'select')) {
-
-				            if (key === 13)
-				            {
-                                // attempt to remove the cell editor and move selection down 1 row
-				                if (tbl.clearEditCell()) {
+					
+						// if its not one of the keys we are interested in, exit
+						if (!key.toString().anyOf('9', '13', '27', '33', '34', '35', '36', '37', '38', '39', '40')) return;
+					
+						// is the cell currently in edit mode ?
+						var inEditMode = (tbl.config.editable && tbl.inEditMode && (tag === 'input' || tag === 'select'));
+						
+						// ignore all navigation keys when in edit mode
+						if (inEditMode && key >= 33 && key <= 40) return;
+						
+						// ignore esc key if not in edit mode
+						if (!inEditMode && key === 27) return;
+						
+						// work out the total number of rows per page
+						var rowsPerPage = Math.max(tbl.tableRowLength - 1 - tbl.startRowIndex, 0);
+						
+						switch (key) {
+						
+							case 9: { // tab
+							
+								var toColIndex = (e.shiftKey) ? colIndex - 1 : colIndex + 1,
+									toRowIndex = dataRowIndex;
+								
+								// tab forwards moving to the next row when we reach the end of the columns
+								if (!e.shiftKey && toColIndex > tbl.dataColLength - tbl.startColIndex - 1 && dataRowIndex < tbl.dataRowLength - 1){
+									toColIndex = tbl.startColIndex;
+									toRowIndex = Math.min(dataRowIndex + 1, tbl.dataRowLength - 1);
+								}
+								// tab backwards moving up a row when we reach the first column
+								else if (e.shiftKey && toColIndex < tbl.startColIndex && dataRowIndex > tbl.startRowIndex) {
+									toColIndex = tbl.tableColLength - 1;
+									toRowIndex = Math.max(dataRowIndex - 1, tbl.startRowIndex);
+								}
+								
+								// attempt to remove the cell editor and move the selection right 1
+                                if (!inEditMode || tbl.clearEditCell()) {
+                                    tbl.selectCell(toRowIndex, toColIndex);
+                                }
+							
+							} break;
+							
+							case 13: { // enter
+							
+								if (!inEditMode && tbl.config.editable){
+								
+									// place the current cell into edit mode
+									tbl.editCell(dataRowIndex, colIndex);
+									
+								}
+								else if (!inEditMode || tbl.clearEditCell()) {
 
 				                    var toRowIndex = (rowIndex + 1 <= tbl.dataRowLength) ? rowIndex + 1 : tbl.dataRowLength;
 
-				                    tbl.selectCell(toRowIndex, colIndex);
-				                }
-				            }
-                            else if (key === 9) {
-
-                                // attempt to remove the cell editor and move the selection right 1
-                                if (tbl.clearEditCell()) {
-                                    tbl.selectCell(rowIndex, colIndex);
-                                }
-
-				            }
-				            else if (key === 27) {
-
-				                // if escape(27) pressed, reset value
-				                el.value = tbl.data[dataRowIndex][colIndex].constructor === Object ? tbl.data[dataRowIndex][colIndex].val : tbl.data[dataRowIndex][colIndex];
-
-				                // remove invalid class if it exists
-				                tools.removeCss(el.parentNode, 'invalid');
-
-				                // attempt to remove the cell editor and move the selection right 1
-				                if (tbl.clearEditCell()) {
 				                    tbl.selectCell(dataRowIndex, colIndex);
 				                }
-				            }
-				        }
-				        if (tbl.config.editable && !tbl.inEditMode && tag === 'td' && key === 13) {
+							
+							} break;
+							
+							case 27: { // escape
+							
+								// reset the value and remove editor
+								tbl.clearEditCell(true);
 
-				            // place the current cell into edit mode
-				            tbl.editCell(dataRowIndex, colIndex);
-
-				            tools.cancelEvent(e);
-				        }
-				        else if (tag === 'td') {
-
-				            if (key === 38) { // up
-
-				                var toRowIndex = Math.max(dataRowIndex - 1, tbl.startRowIndex);
-
-				                tbl.selectCell(toRowIndex, colIndex);
-
-				                // if we are not at the top, cancel event
-				                if (toRowIndex !== tbl.startRowIndex) tools.cancelEvent(e);
-				            }
-				            else if (key === 40) { // down
-
-				                var toRowIndex = Math.min(dataRowIndex + 1, tbl.dataRowLength);
+								// set the current cell as selected
+								tbl.selectCell(dataRowIndex, colIndex);
+							
+							} break;
+							
+							case 33: { // page up
+					
+				                var toRowIndex =  Math.max(dataRowIndex - rowsPerPage, tbl.startRowIndex);
 
 				                tbl.selectCell(toRowIndex, colIndex);
+								
+				            } break;
+							
+							case 34: { // page down
+							
+								var toRowIndex = Math.min(dataRowIndex + rowsPerPage, tbl.dataRowLength - 1);
 
-				                // if we are not at the bottom, cancel event
-				                if (toRowIndex !== tbl.dataRowLength) tools.cancelEvent(e);
-				            }
-				            else if (key === 37) { // left
-
+				                tbl.selectCell(toRowIndex, colIndex);
+								
+				            } break;
+							
+							case 35: { // end
+							
+				                tbl.selectCell(dataRowIndex, tbl.dataColLength - 1);
+								
+				            } break;
+							
+							case 36: { // home
+							
+				                tbl.selectCell(dataRowIndex, tbl.startColIndex);
+								
+				            } break;
+							
+							case 37: { // left
+							
 				                var toColIndex = Math.max(colIndex - 1, tbl.startColIndex);
 
 				                tbl.selectCell(dataRowIndex, toColIndex);
-				            }
-				            else if (key === 39) { // right
+								
+				            } break;
+							
+							case 38: { // up
+								
+				                var toRowIndex = Math.max(dataRowIndex - 1, tbl.startRowIndex);
+
+				                tbl.selectCell(toRowIndex, colIndex);
+								
+				            } break;
+							
+							case 39: { // right
 							
 				                var toColIndex = Math.min(colIndex + 1, tbl.dataColLength - tbl.startColIndex - 1);
 
 				                tbl.selectCell(dataRowIndex, toColIndex);
-				            }
-				            else if (key === 33) { // page up
-
-				                var toRowIndex = Math.max(dataRowIndex - this.tableRowLength, this.startRowIndex);
-
-				                tbl.selectCell(toRowIndex, colIndex);
-
-				                tools.cancelEvent(e);
-				            }
-				            else if (key === 34) { // page down
-
-				                var toRowIndex = Math.min(dataRowIndex + this.tableRowLength, this.dataRowLength);
+								
+				            } break;
+							
+							case 40: { // down
+							
+				                var toRowIndex = Math.min(dataRowIndex + 1, tbl.dataRowLength - 1);
 
 				                tbl.selectCell(toRowIndex, colIndex);
-				            }
-				            else if (key === 36) { // home
+								
+				            } break;
+						}
 
-				                tbl.selectCell(dataRowIndex, tbl.startColIndex);
-
-				                tools.cancelEvent(e);
-				            }
-				            else if (key === 35) { // end
-
-				                tbl.selectCell(dataRowIndex, tbl.dataColLength - 1);
-
-				                tools.cancelEvent(e);
-				            }
-				        }
-
+						// cancel default keyboard action if we are moving within the data range
+						if (toRowIndex !== tbl.dataRowLength && toRowIndex !== tbl.startRowIndex) {
+							tools.cancelEvent(e);
+						}
+						
 				    } break;
 
 				    case 'keyup': {
 
 				        console.log("key = {0}".format(key));
 
-				        if (tag === 'td' && key === 9) { // tab
-
-				            var toRowIndex = (rowIndex > tbl.dataRowLength) ? tbl.startRowIndex : rowIndex,
-                                toColIndex = (colIndex <= tbl.dataColLength) ? colIndex : tbl.startColIndex;
-
-				            tbl.selectCell(toRowIndex, toColIndex);
-				        }
-
 					} break;
 
-					case 'blur':
-					{
-					    if (tbl.inEditMode) {
-					        tbl.clearEditCell(rowIndex, colIndex);
+					case 'blur': {
+					
+					    if (inEditMode) {
+					        tbl.clearEditCell();
 					    }
 
 					}break;
@@ -1158,7 +1181,7 @@ var pureGrid = {
 
 	    // removes the editor from the cell, returns true if complete otherwise false (if validation failed)
 		// edit can not be canceled if the value is invalid
-		clearEditCell : function() {
+		clearEditCell : function(reset) {
 
 		    if (this.inEditMode && this.editor) {
 
@@ -1171,7 +1194,11 @@ var pureGrid = {
                     newValue = (editor.selectedIndex) ? editor.options[editor.selectedIndex].value : editor.value,
                     oldValue = (this.data[dataRowIndex][colIndex].constructor === Object) ? this.data[dataRowIndex][colIndex].val : this.data[dataRowIndex][colIndex];
 
-		        if (pureGrid._.isValid(newValue, dataType)) {
+				// if this is a reset, use the old value
+				newValue = (reset) ? oldValue : newValue;
+
+				// if we are resetting the value or the new value passes validation, remove edit mode
+				if (reset || pureGrid._.isValid(newValue, dataType)) {
 
 		            // remove the editor event handlers
 		            editor.onkeyup = editor.onblur = null;
@@ -1181,6 +1208,9 @@ var pureGrid = {
 
 		            // remove the editing css class from the cell
 		            tools.removeCss(cell, 'editing');
+					
+					// remove invalid class if it exists
+					tools.removeCss(cell, 'invalid');
 
 		            if (newValue !== oldValue) {
 		                // the value has changed, update the data array and trigger a table redraw
@@ -1211,6 +1241,7 @@ var pureGrid = {
 		                cell.title = 'Invalid value, please correct!';
 
 		            }
+					
 		            editor.focus();
 		        }
 		    }
