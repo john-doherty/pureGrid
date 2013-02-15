@@ -703,10 +703,13 @@ var pureGrid = {
 						{
 					        tbl.editCell(dataRowIndex, colIndex);
 						}
-						else if (!tbl.inEditMode && tbl.config.selectableCells && !isSelectedCell && tag === 'td') // SELECT CELL (oncellclick)
+						else if (tbl.config.selectableCells && !isSelectedCell && tag === 'td') // SELECT CELL (oncellclick)
 						{
-						    pureGrid._.fireEvent('oncellclick', tbl, drCell, colIndex);
-						    tbl.selectCell(dataRowIndex, colIndex);
+							// attempt to remove the cell editor and shift the selected cell
+							if (!tbl.inEditMode || tbl.clearEditCell()) {
+								pureGrid._.fireEvent('oncellclick', tbl, drCell, colIndex);
+								tbl.selectCell(dataRowIndex, colIndex);
+							}
 						}
 
 					} break;
@@ -798,7 +801,9 @@ var pureGrid = {
 							
 							case 35: { // end
 							
-				                tbl.selectCell(dataRowIndex, tbl.dataColLength - 1);
+								var toColIndex = Math.max(tbl.startColIndex, tbl.dataColLength - tbl.startColIndex - 1);
+							
+				                tbl.selectCell(dataRowIndex, toColIndex);
 								
 				            } break;
 							
