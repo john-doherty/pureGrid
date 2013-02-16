@@ -624,6 +624,12 @@ var pureGrid = {
 			this.table.onclick = pureGrid._.eventDelegate;
 			this.container.onkeyup = pureGrid._.eventDelegate;
 			this.container.onkeydown = pureGrid._.eventDelegate;
+			this.table.onmousewheel = pureGrid._.eventDelegate;
+			
+			if (this.table.addEventListener) {
+				// add firefox mouse wheel event
+				this.table.addEventListener('DOMMouseScroll', pureGrid._.eventDelegate, true);
+			}
 			
 			// show the table
 			this.table.removeAttribute('class');
@@ -654,15 +660,15 @@ var pureGrid = {
 		eventDelegate : function(e)
 		{
 			e = e || event;
-			var el = e.target || e.srcElement,
-				tag = el.tagName.toLowerCase(),
+			var el = e.target || e.srcElement || {},
+				tag = (el.tagName || '').toLowerCase(),
 				type = e.type,
 				btn = e.which || e.button,
 				key = e.keyCode,
 				rowIndex = el.parentNode.rowIndex || el.parentNode.parentNode.rowIndex || 0, // its either td>tr or input>td>tr
 				colIndex = el.cellIndex || el.parentNode.cellIndex || 0; // its either td or input>td
-
-			if (tag.anyOf('th', 'td', 'input', 'select', 'div')) {
+				
+			if (tag.anyOf('table', 'tr', 'th', 'td', 'input', 'select', 'div')) {
 
 				// resolve table object for event element (change this to getParent method call)
 			    var tbl = pureGrid.getById(el.parentNode.id || el.parentNode._tableid || el.parentNode.parentNode._tableid);
@@ -686,6 +692,19 @@ var pureGrid = {
 				        }
 
 				    } break;
+					
+					case 'DOMMouseScroll': 
+					case 'mousewheel': {
+						
+						var direction = (e.detail || e.wheelDelta >- 1) ? 1 : -1;
+					
+						// updated the scrollbar position triggering the scroll event to fire
+						tbl.scrollerY.scrollTop -= direction * tbl.cellHeight;
+					
+						// cancel default event
+						tools.cancelEvent(e);
+					
+					} break;
 
 					case 'click': {
 					
@@ -964,9 +983,7 @@ var pureGrid = {
 			
 				// remove visual marker
 				tools.removeCss(this.selectedCell, 'selected');
-			
-				// blur the previous selected cell
-				//this.selectedCell.blur();
+
 			}
 			
 			if (selectedCell) {
