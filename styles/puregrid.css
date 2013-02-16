@@ -88,11 +88,11 @@
 	width: 40px !important;
 }
 
-/* should only be applied if hover is enabled */
+/*
 .puregrid tbody tr:hover {
     background-color: #eaecf5;
     cursor: pointer;
-}
+}*/
 
 .puregrid table tr.selected td {
     background-color: #dce6f0;
