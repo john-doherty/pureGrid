@@ -259,7 +259,10 @@ var pureGrid = {
 		{
 	        rowIndex = (rowIndex || tbl.data.length) - 1;
 		
-			//TODO: need to padd/trim the rowData if the length does not match existing data
+			// ensure the new row contains valid data (also ensure min length)
+			for (var i=0, l=tbl.dataColLength; i<l; i++) {
+				rowData[i] = rowData[i] || '';
+			}
 		
 		    if (rowIndex >= 0)
 			{
