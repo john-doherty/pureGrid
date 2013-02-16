@@ -93,8 +93,8 @@ Array.prototype.last = function() { return (this.length>0) ? this[this.length-1]
 var tools = {
 
     // if running in debug mode, write values to the console window
-    trace : function (s) { 
-	    if (window.console && window.console.log) { window.console.log(s); };
+    trace : function (s) {
+		if (window.console && window.console.log) { window.console.log(s); }
     },
 
 	// cancels an event
@@ -198,7 +198,8 @@ var pureGrid = {
 		{
 			for(var i = pureGrid._.subscribers.length-1; i >= 0; i--)
 			{
-				var sub = pureGrid._.subscribers[i]
+				var sub = pureGrid._.subscribers[i];
+				
 				if (sub.name === name && sub.callback === callback)
 				{
 					pureGrid._.subscribers.splice(i,1);
@@ -234,43 +235,39 @@ var pureGrid = {
 	},
 	
 	// get a table by ID
-	getById: function (tableId)
-	{
-	    return pureGrid.items.where('id', tableId).first();
+	getById: function (tableId) {
+		return pureGrid.items.where('id', tableId).first();
 	},
 	
 	// set data at a particular row/column
-	updateCell: function (tableId, rowIndex, colIndex, value)
-	{
-	    var tbl = pureGrid.items.where('id', tableId).first();
-
-	    if (tbl)
-		{
-	        tbl.updateCell(rowIndex, colIndex, value);
+	updateCell: function (tableId, rowIndex, colIndex, value) {
+	
+		var tbl = pureGrid.items.where('id', tableId).first();
+		
+		if (tbl) {
+			tbl.updateCell(rowIndex, colIndex, value);
 		}
 	},
 	
 	// adds a row of data to the table at certain position
-	addRow: function (tableId, rowIndex, rowData)
-	{
-	    var tbl = pureGrid.items.where('id', tableId).first();
-
-	    if (tbl && rowData.length > 0)
-		{
-	        rowIndex = (rowIndex || tbl.data.length) - 1;
+	addRow: function (tableId, rowIndex, rowData) {
+	
+		var tbl = pureGrid.items.where('id', tableId).first();
+		
+		if (tbl && rowData.length > 0) {
+		
+			rowIndex = (rowIndex || tbl.data.length) - 1;
 		
 			// ensure the new row contains valid data (also ensure min length)
 			for (var i=0, l=tbl.dataColLength; i<l; i++) {
 				rowData[i] = rowData[i] || '';
 			}
-		
-		    if (rowIndex >= 0)
-			{
-		        tbl.data.splice(rowIndex + tbl.startRowIndex, 0, rowData);
+			
+			if (rowIndex >= 0) {
+				tbl.data.splice(rowIndex + tbl.startRowIndex, 0, rowData);
 			}
-			else
-			{
-		        tbl.data = tbl.data.concat(rowData);
+			else {
+				tbl.data = tbl.data.concat(rowData);
 			}
 			
 			// re-render the table as the number of rows has changed
@@ -284,33 +281,33 @@ var pureGrid = {
 	},
 	
 	// removes a row from the table
-	removeRow: function (tableId, rowIndex)
-	{
-	    var tbl = pureGrid.items.where('id', tableId).first();
-
-	    if (tbl && tbl.data.length > 0)
-		{
-	        tbl.data.splice(rowIndex, 1);
+	removeRow: function (tableId, rowIndex) {
+		
+		var tbl = pureGrid.items.where('id', tableId).first();
+		
+		if (tbl && tbl.data.length > 0) {
+		
+			tbl.data.splice(rowIndex, 1);
 			
 			// rebuild the table as the total height has changed (this should be redraw + updateScrollbar method calls)
-	        tbl.render();
+			tbl.render();
 		}
 	},
 	
 	// updates a row in the table
-	updateRow: function (tableId, rowIndex, rowData)
-	{
-	    var tbl = pureGrid.items.where('id', tableId).first();
-
-	    if (tbl && tbl.data.length > 0)
-		{
+	updateRow: function (tableId, rowIndex, rowData) {
+	
+		var tbl = pureGrid.items.where('id', tableId).first();
+		
+		if (tbl && tbl.data.length > 0) {
+		
 			// ensure the new row contains valid data (also ensure min length)
 			for (var i=0, l=tbl.dataColLength; i<l; i++) {
 				rowData[i] = rowData[i] || '';
 			}
 		
 			// add row to data array
-	        tbl.data.splice(rowIndex, 1, rowData);
+			tbl.data.splice(rowIndex, 1, rowData);
 			
 			// as the data array has changed, call render in order to force a recalc of the scrollbar
 			tbl.render();
@@ -318,39 +315,31 @@ var pureGrid = {
 	},
 	
 	// select a cell
-	selectCell : function(tableId, rowIndex, colIndex)
-	{
-	    var tbl = pureGrid.items.where('id', tableId).first();
-
-	    if (tbl)
-		{
-	        tbl.selectCell(rowIndex, colIndex);
+	selectCell : function(tableId, rowIndex, colIndex) {
+	
+		var tbl = pureGrid.items.where('id', tableId).first();
+		
+		if (tbl) {
+			tbl.selectCell(rowIndex, colIndex);
 		}
 	},
 	
 	// place a cell into edit mode
-	editCell: function (tableId, rowIndex, colIndex)
-	{
-	    var tbl = pureGrid.items.where("id", tableId).first();
-
-	    if (tbl)
-		{
-	        //tbl.selectCell(rowIndex, colIndex);
-	        tbl.editCell(rowIndex, colIndex);
+	editCell: function (tableId, rowIndex, colIndex) {
+	
+		var tbl = pureGrid.items.where("id", tableId).first();
+		
+		if (tbl) {
+			tbl.editCell(rowIndex, colIndex);
 		}
 	},
 	
 	// is a row within the visual region of the screen ?
-	isCellVisible: function (tableId, rowIndex)
-	{
-	    var tbl = pureGrid.items.where('id', tableId).first();
-
-	    if (tbl)
-		{
-	        return tbl.isCellVisible(rowIndex);
-	    }
-
-		return false;
+	isCellVisible: function (tableId, rowIndex) {
+	
+		var tbl = pureGrid.items.where('id', tableId).first();
+		
+		return (tbl) ? tbl.isCellVisible(rowIndex) : false;
 	},
 	
 	// does the same as reload only using the local array rather then reloading from the server
@@ -360,43 +349,41 @@ var pureGrid = {
 	},
 	
 	// requests the url 
-	load: function (tableId, url /* jsonp url */)
-	{
-	    var tbl = pureGrid.items.where('id', tableId).first();
-
-	    if (tbl)
-		{
-	        tbl.load(url);
+	load: function (tableId, url /* jsonp url */) {
+	
+		var tbl = pureGrid.items.where('id', tableId).first();
+		
+		if (tbl) {
+			tbl.load(url);
 		}
 	},
 	
 	// modifies the scroll position and triggers a redraw at the specified row/col
 	scrollTo: function (tableId, rowIndex, colIndex) {
 	
-	    var tbl = pureGrid.items.where('id', tableId).first();
+		var tbl = pureGrid.items.where('id', tableId).first();
 
 	    if (tbl) {
-	        tbl.scrollTo(rowIndex);
-	    }
+			tbl.scrollTo(rowIndex);
+		}
 	},
 	
 	// binds json data to the table, executed via JsonP
-	bind: function (tableId, config)
-	{
-	    var tbl = pureGrid.getById(tableId);
+	bind: function (tableId, config) {
+	
+		var tbl = pureGrid.getById(tableId);
 
-		if (tbl)
-		{
+		if (tbl) {
+		
 			tools.removeCss(tbl.container, 'loading');
 			
-			if (config)
-			{
-				// apply config passed by param
-				for (var a in config)
-				{
-					if (a != 'data' && config[a]!=undefined) tbl.config[a] = config[a];
-				}
+			if (config) {
 			
+				// apply config passed by param
+				for (var a in config) {
+					if (a != 'data' && config[a] !== undefined) tbl.config[a] = config[a];
+				}
+				
 				// assign the table data
 				tbl.data = config.data || [];
 				
@@ -456,10 +443,10 @@ var pureGrid = {
 			// assign default config & get values from class names
 			this.config = {
 				caption : '',															// caption of table to be displayed above the table
-				rows : parseInt(cn.getCssKeyValue('puregrid-rows')) || -1,				// number of rows to render	
-				cols : parseInt(cn.getCssKeyValue('puregrid-cols')) || -1,				// number of cols to render
+				rows : parseInt(cn.getCssKeyValue('puregrid-rows'), 10) || -1,			// number of rows to render	
+				cols : parseInt(cn.getCssKeyValue('puregrid-cols'), 10) || -1,			// number of cols to render
 				firstRowIsHeader : (cn.getCssKeyValue('puregrid-firstrowisheader')>-1),	// row to use as column headers
-				firstColIsHeader : (cn.indexOf('puregrid-firstcolisheader')>-1),			// should we display row numbers ?
+				firstColIsHeader : (cn.indexOf('puregrid-firstcolisheader')>-1),		// should we display row numbers ?
 				selectableRows : (cn.indexOf('puregrid-selectablerows')>-1),			// is the user allowed to select rows
 				selectableCells : (cn.indexOf('puregrid-selectablecells')>-1),			// are the individual cells selectable ?
 				css : '',																// custom css class specified by the developer
@@ -501,7 +488,7 @@ var pureGrid = {
 			// build the data url with query parameters
 			this.dataUrl = (di) ? '{0}?id={1}'.format(di.value, el.id) : '';
 				
-			if (this.dataUrl!='')
+			if (this.dataUrl !== '')
 			{
 				tools.addCss(el, 'loading');
 				this.load.delay(0, null, this.dataUrl);				
@@ -530,10 +517,10 @@ var pureGrid = {
 			this.selectedCell = null;							// hold a reference to the currently selected TD
 
 			// if set, assign user defined css class
-			if (this.config.css != '') tools.addCss(el, this.config.css);
+			if (this.config.css !== '') tools.addCss(el, this.config.css);
 
 			// if caption set, apply css to allow the table to cater for the additional space required
-			if (this.config.caption != '') tools.addCss(el, 'puregrid-show-caption');
+			if (this.config.caption !== '') tools.addCss(el, 'puregrid-show-caption');
 
 			// wrapper table is used to assign right margin
 			this.tableWrapper = tools.createElement(null, 'div', { 'class': 'puregrid-table-wrapper' });
@@ -542,18 +529,18 @@ var pureGrid = {
 			this.table = tools.createElement(this.tableWrapper, 'table', { 'class': 'hidden', tabIndex: 0, 'cellpadding': '0', 'cellspacing': '0' });
 
 			// if we have a caption, add the element
-			if (this.config.caption != '') {
-			    this.caption = tools.createElement(this.table, 'caption', null, this.config.caption);
+			if (this.config.caption !== '') {
+				this.caption = tools.createElement(this.table, 'caption', null, this.config.caption);
 			}
 
 			var cgroup = tools.createElement(this.table, 'colgroup'),
-			    thead = tools.createElement(this.table, 'thead'),
-                tbody = tools.createElement(this.table, 'tbody'),
-                tr = tools.createElement((this.config.firstRowIsHeader) ? thead : tbody, 'tr', {_tableid: this.id }),
-                cell = null,
-                rowIndex = 0,
-                colIndex = 0;
-
+				thead = tools.createElement(this.table, 'thead'),
+				tbody = tools.createElement(this.table, 'tbody'),
+				tr = tools.createElement((this.config.firstRowIsHeader) ? thead : tbody, 'tr', {_tableid: this.id }),
+				cell = null,
+				rowIndex = 0,
+				colIndex = 0;
+			
 			// build the table
 			while (rowIndex < this.tableRowLength)
 			{
@@ -615,7 +602,7 @@ var pureGrid = {
 			}
 			
 			// hook the on scroll event
-			this.scrollerY.onscroll = pureGrid._.eventDelegate;
+			this.scrollerY.onscroll = pureGrid._.eventHandler;
 			
 			// draw the data at row 1
 			this.redraw(0, 0);
@@ -624,14 +611,14 @@ var pureGrid = {
 			this.rendering = false;
 			
 			// attach event handlers
-			this.table.onclick = pureGrid._.eventDelegate;
-			this.container.onkeyup = pureGrid._.eventDelegate;
-			this.container.onkeydown = pureGrid._.eventDelegate;
-			this.table.onmousewheel = pureGrid._.eventDelegate;
+			this.table.onclick = pureGrid._.eventHandler;
+			this.container.onkeyup = pureGrid._.eventHandler;
+			this.container.onkeydown = pureGrid._.eventHandler;
+			this.table.onmousewheel = pureGrid._.eventHandler;
 			
 			if (this.table.addEventListener) {
 				// add firefox mouse wheel event
-				this.table.addEventListener('DOMMouseScroll', pureGrid._.eventDelegate, true);
+				this.table.addEventListener('DOMMouseScroll', pureGrid._.eventHandler, true);
 			}
 			
 			// show the table
@@ -645,7 +632,7 @@ var pureGrid = {
 			
 			//tools.trace('loading... ' + url);
 
-			if (url != undefined && url !='')
+			if (url !== undefined && url !== '')
 			{
 				url = url + '&nocache=' + (new Date()).getTime();
 			
@@ -660,7 +647,7 @@ var pureGrid = {
 		},
 
 		// handles all table related events
-		eventDelegate : function(e)
+		eventHandler : function(e)
 		{
 			e = e || event;
 			var el = e.target || e.srcElement || {},
@@ -683,7 +670,7 @@ var pureGrid = {
 				
 				    case 'scroll': {
 					
-				        if (!tbl.inEditMode) {
+						if (!tbl.inEditMode) {
 
 				            // calculate the current row position
 				            var row = Math.ceil(this.scrollTop / tbl.cellHeight);
@@ -694,7 +681,8 @@ var pureGrid = {
 				            }
 				        }
 
-				    } break;
+						break;
+				    } 
 					
 					case 'DOMMouseScroll': 
 					case 'mousewheel': {
@@ -1182,7 +1170,7 @@ var pureGrid = {
 				this.inEditMode = true;
 				
 				// setup edit complete hooks
-				editor.onkeyup = editor.onblur = pureGrid._.eventDelegate;
+				editor.onkeyup = editor.onblur = pureGrid._.eventHandler;
 
 				// add the editor to the current table cell
 				el.appendChild(editor);
