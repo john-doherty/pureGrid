@@ -78,7 +78,7 @@ pureGrid.event.subscribe('onready', function(){
 
 ## Please Note
 
-This code was written in 2013, a lot has changed since then and I'm planning a write to make it production ready.
+This code was written in 2013, a lot has changed since then and I'm planning a rewrite to make it production ready.
 
 ## License
 
